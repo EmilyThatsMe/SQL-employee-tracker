@@ -1,5 +1,7 @@
 // Dependencies
 // =========================================
+const inquirer = require('inquirer');
+const fs = require('fs');
 const express = require('express');
 const db = require('./db/connection');
 //const apiRoutes = require('./routes/apiRoutes')
@@ -26,3 +28,26 @@ app.use((req, res) => {
       console.log(`Server running on port ${PORT}`);
     });
   });
+
+  // Start app
+  // ========================================
+  function startApp() {
+      inquirer
+        .prompt({
+            name: "action",
+            type: "list",
+            message: "What would you like to do?",
+            choices: [
+                "View all employees",
+                "View all departments",
+                "View all roles",
+                "Add a department",
+                "Add a role",
+                "Add an employee",
+                "Update an employee role"
+            ]
+            // promise
+        })
+  };
+
+  startApp();
