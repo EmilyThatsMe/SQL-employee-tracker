@@ -50,4 +50,28 @@ app.use((req, res) => {
         })
   };
 
+  // Shows departments only, without employees
+function viewDepartments() {
+  var deparmentsTable = connection.query("SELECT * FROM departments;",
+
+
+      function (error, depTable) {
+          if (error) throw error
+          console.table(depTable)
+      })
+}
+// "Add Department"
+function addDepartment(department) {
+
+  var department = connection.query(
+      "INSERT INTO department SET d_name = ?",
+      [department],
+      function (error, department) {
+          if (error) throw error
+          // console.table(manager)
+      })
+
+  departmentsTable();
+}
+
   startApp();
