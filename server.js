@@ -4,6 +4,8 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const express = require('express');
 const db = require('./db/connection');
+const { start } = require('repl');
+//const utils = require('./utils/index');
 //const apiRoutes = require('./routes/apiRoutes')
 
 const PORT = process.env.PORT || 3001;
@@ -31,6 +33,12 @@ app.use((req, res) => {
 
   // Start app
   // ========================================
+  init();
+
+  function init() {
+    startApp();
+  }
+
   function startApp() {
       inquirer
         .prompt({
@@ -47,12 +55,52 @@ app.use((req, res) => {
                 "Update an employee role"
             ]
             // promise
-        })
+        }).then(res => {
+          let choice = res.action;
+          // Run functions based on choice
+          switch(choice) {
+            case "View all departments":
+              viewDepartments();
+              break;
+            case "View all roles":
+              viewRoles();
+              break;
+            case "View all employees":
+              viewEmployees();
+              break;
+            case "Add a department":
+              inquirer
+              .prompt([
+                {
+                  name: "department",
+                  type: "input",
+                  message: "What is the department's name?"
+                }
+              ]).then(res => {
+              addDepartment(res.department);
+            });
+              break;
+            case "Add a role":
+              addRole();
+              break;
+            case "Add an amployee":
+              addEmployee();
+              break;
+            case "Add an employee role":
+              addEmpRole();
+              break;
+            default:
+              quit();
+          }
+        });
   };
 
-  // Shows departments only, without employees
+  // Functions
+  // =============================
+
+// Shows departments only, without employees
 function viewDepartments() {
-  var deparmentsTable = connection.query("SELECT * FROM departments;",
+  var depTable = db.query("SELECT * FROM departments;",
 
 
       function (error, depTable) {
@@ -60,18 +108,16 @@ function viewDepartments() {
           console.table(depTable)
       })
 }
+
 // "Add Department"
 function addDepartment(department) {
 
-  var department = connection.query(
-      "INSERT INTO department SET d_name = ?",
+  var department = db.query(
+      "INSERT INTO departments SET department_name = ?",
       [department],
       function (error, department) {
           if (error) throw error
-          // console.table(manager)
       })
 
-  departmentsTable();
+  viewDepartments();
 }
-
-  startApp();
