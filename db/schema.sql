@@ -1,6 +1,14 @@
 DROP TABLE IF EXISTS departments;
+DROP TABLE IF EXISTS roles;
 
 CREATE TABLE departments (
      id INTEGER AUTO_INCREMENT PRIMARY KEY,
      department_name VARCHAR(30) NOT NULL
      );
+
+CREATE TABLE roles (
+id INTEGER AUTO_INCREMENT PRIMARY KEY,
+job_title VARCHAR(30) NOT NULL,
+department VARCHAR(30) NOT NULL,
+salary VARCHAR(30) NOT NULL
+);

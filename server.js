@@ -81,7 +81,26 @@ app.use((req, res) => {
             });
               break;
             case "Add a role":
-              addRole();
+              inquirer
+              .prompt([
+                {
+                  name: "job_title",
+                  type: "input",
+                  message: "What is the job title of the role?"
+                },
+                {
+                  name: "department",
+                  type: "input",
+                  message: "What job department is the role for?"
+                },
+                {
+                  name: "salary",
+                  type: "input",
+                  message: "What is the salary for the role?"
+                }
+              ]).then(res => {
+              addRole(res.job_title, res.department, res.salary);
+            });
               break;
             case "Add an amployee":
               addEmployee();
@@ -98,7 +117,7 @@ app.use((req, res) => {
   // Functions
   // =============================
 
-// Shows departments only, without employees
+// "View Departments"
 function viewDepartments() {
   var depTable = db.query("SELECT * FROM departments;",
 
@@ -106,6 +125,17 @@ function viewDepartments() {
       function (error, depTable) {
           if (error) throw error
           console.table(depTable)
+      })
+}
+
+// "View Roles"
+function viewRoles() {
+  var roleTable = db.query("SELECT * FROM roles;",
+
+
+      function (error, roleTable) {
+          if (error) throw error
+          console.table(roleTable)
       })
 }
 
@@ -120,4 +150,17 @@ function addDepartment(department) {
       })
 
   viewDepartments();
+}
+
+// "Add Roles"
+function addRole(job_title, department, salary) {
+
+  var role = db.query(
+      "INSERT INTO roles SET job_title = ?, department = ?, salary = ?",
+      [job_title, department, salary],
+      function (error, role) {
+          if (error) throw error
+      })
+
+  viewRoles();
 }
