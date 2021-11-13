@@ -102,20 +102,58 @@ app.use((req, res) => {
               addRole(res.job_title, res.department, res.salary);
             });
               break;
-            case "Add an amployee":
-              addEmployee();
+            case "Add an employee":
+              inquirer
+              .prompt([
+                {
+                  name: "first_name",
+                  type: "input",
+                  message: "What is the employee's first name?"
+                },
+                {
+                  name: "last_name",
+                  type: "input",
+                  message: "What is the employee's last name?"
+                },
+                {
+                  name: "department",
+                  type: "input",
+                  message: "What department does the employee work for?"
+                },
+                {
+                  name: "salary",
+                  type: "input",
+                  message: "What is the salary of the employee?"
+                },
+                {
+                  name: "managers",
+                  type: "input",
+                  message: "Who is the manager for this employee?"
+                }
+              ]).then(res => {
+              addEmployee(res.first_name, res.last_name, res.department, res.salary, res.managers);
+            });
               break;
             case "Add an employee role":
               addEmpRole();
               break;
-            default:
-              quit();
           }
         });
   };
 
   // Functions
   // =============================
+
+  // "View Employees"
+function viewEmployees() {
+  var empTable = db.query("SELECT * FROM employees;",
+
+  function (error, empTable) {
+    if (error) throw error
+    console.table(empTable)
+});
+};
+
 
 // "View Departments"
 function viewDepartments() {
@@ -125,8 +163,8 @@ function viewDepartments() {
       function (error, depTable) {
           if (error) throw error
           console.table(depTable)
-      })
-}
+      });
+};
 
 // "View Roles"
 function viewRoles() {
@@ -136,8 +174,8 @@ function viewRoles() {
       function (error, roleTable) {
           if (error) throw error
           console.table(roleTable)
-      })
-}
+      });
+};
 
 // "Add Department"
 function addDepartment(department) {
@@ -147,10 +185,10 @@ function addDepartment(department) {
       [department],
       function (error, department) {
           if (error) throw error
-      })
+      });
 
   viewDepartments();
-}
+};
 
 // "Add Roles"
 function addRole(job_title, department, salary) {
@@ -163,4 +201,17 @@ function addRole(job_title, department, salary) {
       })
 
   viewRoles();
-}
+};
+
+// "Add Employees"
+function addEmployee(first_name, last_name, department, salary, managers) {
+
+  var employee = db.query(
+      "INSERT INTO employees SET first_name = ?, last_name = ?, department = ?, salary = ?, managers = ?",
+      [first_name, last_name, department, salary, managers],
+      function (error, employee) {
+          if (error) throw error
+      })
+
+  viewEmployees();
+};
