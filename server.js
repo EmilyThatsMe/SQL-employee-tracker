@@ -1,28 +1,25 @@
 // Dependencies
-// =========================================
+// =======================================================================================================
 const inquirer = require('inquirer');
 const fs = require('fs');
 const express = require('express');
 const db = require('./db/connection');
 const { start } = require('repl');
-//const utils = require('./utils/index');
-//const apiRoutes = require('./routes/apiRoutes')
 
 const PORT = process.env.PORT || 3001;
 const app = express();
 
 // Express middleware
-// =========================================
+// =======================================================================================================
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-//app.use('/api', apiRoutes);
 // Default response for any other request (Not Found)
 app.use((req, res) => {
     res.status(404).end();
   });
 
   // Start server afer DB commection
-  // =======================================
+  // ======================================================================================================
   db.connect(err => {
     if (err) throw err;
     console.log('Database connected.');
@@ -32,7 +29,7 @@ app.use((req, res) => {
   });
 
   // Start app
-  // ========================================
+  // ======================================================================================================
   init();
 
   function init() {
@@ -52,7 +49,8 @@ app.use((req, res) => {
                 "Add a department",
                 "Add a role",
                 "Add an employee",
-                "Update an employee role"
+                "Update an employee role",
+                "Delete an employee"
             ]
             // promise
         }).then(res => {
@@ -134,15 +132,32 @@ app.use((req, res) => {
               addEmployee(res.first_name, res.last_name, res.department, res.salary, res.managers);
             });
               break;
-            case "Add an employee role":
+            case "Update an employee role":
               addEmpRole();
               break;
+              
+              case "Delete an employee":
+                inquirer
+                    .prompt([
+                        {
+                            name: "id",
+                            type: "input",
+                            message: "Please enter the Employee id",
+
+                        }
+                    ]).then(res => {
+                        // Removes employee to database
+                        deleteEmployee(res.id);
+                        viewEmployees();
+                    })
+                break;
           }
+          
         });
   };
 
   // Functions
-  // =============================
+  // ================================================================================================
 
   // "View Employees"
 function viewEmployees() {
@@ -214,4 +229,15 @@ function addEmployee(first_name, last_name, department, salary, managers) {
       })
 
   viewEmployees();
+};
+
+// "Delete Employee"
+function deleteEmployee(id) {
+
+  var add = db.query(
+      "DELETE FROM employees WHERE id = ?",
+      [id],
+      function (error, id) {
+          if (error) throw error
+      });
 };
